@@ -1,22 +1,33 @@
-package org.maidscc.librarymanagementsystem.entities;
+package org.maidscc.librarymanagementsystem.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+    @Column(name = "title")
+    @NotNull
     private String title;
+    @NotNull
+    @Column(name = "author")
     private String author;
-    private int publicationYear;
+    @Column(name = "publication_year")
+    private String publicationYear;
+    @NotNull
+    @Column(name = "isbn")
     private String isbn;
+    @NotNull
+    @Column(name = "publisher")
     private String publisher;
-    private int pages;
+    @Column(name = "genre")
     private String genre;
+
+    public Book() {
+    }
 
     public Long getId() {
         return id;
@@ -42,11 +53,11 @@ public class Book {
         this.author = author;
     }
 
-    public int getPublicationYear() {
+    public String getPublicationYear() {
         return publicationYear;
     }
 
-    public void setPublicationYear(int publicationYear) {
+    public void setPublicationYear(String publicationYear) {
         this.publicationYear = publicationYear;
     }
 
@@ -64,14 +75,6 @@ public class Book {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
-    }
-
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
     }
 
     public String getGenre() {

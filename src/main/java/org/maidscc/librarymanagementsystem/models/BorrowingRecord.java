@@ -1,9 +1,6 @@
-package org.maidscc.librarymanagementsystem.entities;
+package org.maidscc.librarymanagementsystem.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -12,10 +9,16 @@ public class BorrowingRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id")
     private Book book;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patron_id")
     private Patron patron;
-    private LocalDate borrowingDate;
-    private LocalDate returningDate;
+    @Column(name = "borrow_date")
+    private LocalDate borrowDate;
+    @Column(name = "return_date")
+    private LocalDate returnDate;
     private boolean isReturned;
 
     public Long getId() {
@@ -42,20 +45,20 @@ public class BorrowingRecord {
         this.patron = patron;
     }
 
-    public LocalDate getBorrowingDate() {
-        return borrowingDate;
+    public LocalDate getBorrowDate() {
+        return borrowDate;
     }
 
-    public void setBorrowingDate(LocalDate borrowingDate) {
-        this.borrowingDate = borrowingDate;
+    public void setBorrowDate(LocalDate borrowDate) {
+        this.borrowDate = borrowDate;
     }
 
-    public LocalDate getReturningDate() {
-        return returningDate;
+    public LocalDate getReturnDate() {
+        return returnDate;
     }
 
-    public void setReturningDate(LocalDate returningDate) {
-        this.returningDate = returningDate;
+    public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public boolean isReturned() {
