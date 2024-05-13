@@ -1,8 +1,8 @@
 package org.maidscc.librarymanagementsystem.services;
 
-import org.maidscc.librarymanagementsystem.daos.BookDao;
-import org.maidscc.librarymanagementsystem.dtos.BookDTO;
 import org.maidscc.librarymanagementsystem.converters.BookDtoToBookConverter;
+import org.maidscc.librarymanagementsystem.daos.BookDao;
+import org.maidscc.librarymanagementsystem.dtos.BookRequestDTO;
 import org.maidscc.librarymanagementsystem.exceptions.BookNotFoundException;
 import org.maidscc.librarymanagementsystem.exceptions.DuplicateFoundException;
 import org.maidscc.librarymanagementsystem.models.Book;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class BookService implements BookDao {
@@ -38,16 +39,19 @@ public class BookService implements BookDao {
     }
 
     @Override
-    public Book getByTitle(String title){
+    public Book getByTitle(String title) {
         return this.bookRepository.findByTitle(title)
                 .orElseThrow(() -> new BookNotFoundException("book with title [%s] not found".formatted(title)));
     }
 
     @Transactional
     @Override
-    public Book addBook(BookDTO book) {
-        if(this.bookRepository.findByTitle(book.title()).isEmpty()){
+    public Book addBook(BookRequestDTO book) {
+        if (this.bookRepository.findByTitle(book.title()).isEmpty()) {
             Book newBook = this.bookDtoToBookConverter.convert(book);
+            if (newBook.getStock() == null) {
+                newBook.setStock(0);
+            }
             return bookRepository.save(newBook);
         }
         throw new DuplicateFoundException("book with same title already exists");
@@ -55,30 +59,30 @@ public class BookService implements BookDao {
 
     @Transactional
     @Override
-    public Book updateBook(long id, Book bookData){
+    public Book updateBook(long id, Book bookData) {
         Book book = this.bookRepository.findById(id).
                 orElseThrow(() -> new BookNotFoundException("book with id [%s] not found".formatted(id)));
 
-        if(bookData.getTitle() != null){
-            if(this.bookRepository.findByTitle(bookData.getTitle()).isEmpty()){
+        if (Objects.nonNull(bookData.getTitle())) {
+            if (bookRepository.findByTitle(bookData.getTitle()).isEmpty()) {
                 book.setTitle(bookData.getTitle());
-            }else{
+            } else {
                 throw new DuplicateFoundException("book with same title already exists");
             }
         }
-        if(bookData.getAuthor() != null){
+        if (Objects.nonNull(bookData.getAuthor())) {
             book.setAuthor(bookData.getAuthor());
         }
-        if(bookData.getPublicationYear() != null){
+        if (bookData.getPublicationYear() != null) {
             book.setPublicationYear(bookData.getPublicationYear());
         }
-        if(bookData.getIsbn() != null){
+        if (bookData.getIsbn() != null) {
             book.setIsbn(bookData.getIsbn());
         }
-        if(bookData.getPublisher() != null){
+        if (bookData.getPublisher() != null) {
             book.setPublisher(bookData.getPublisher());
         }
-        if(bookData.getGenre() != null){
+        if (bookData.getGenre() != null) {
             book.setGenre(bookData.getGenre());
         }
         return this.bookRepository.save(book);
@@ -86,9 +90,23 @@ public class BookService implements BookDao {
 
     @Transactional
     @Override
-    public void deleteBook(long id){
+    public void deleteBook(long id) {
         this.bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("book with id [%s] not found".formatted(id)));
         this.bookRepository.deleteById(id);
+    }
+
+    public void decStock(long id) {
+        Book book = this.bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("book with id [%s] not found".formatted(id)));
+        book.setStock(book.getStock() - 1);
+        this.bookRepository.save(book);
+    }
+
+    public void incStock(long id) {
+        Book book = this.bookRepository.findById(id)
+                .orElseThrow(() -> new BookNotFoundException("book with id [%s] not found".formatted(id)));
+        book.setStock(book.getStock() + 1);
+        this.bookRepository.save(book);
     }
 }

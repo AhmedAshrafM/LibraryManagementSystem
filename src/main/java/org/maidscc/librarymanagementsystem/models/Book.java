@@ -2,6 +2,9 @@ package org.maidscc.librarymanagementsystem.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.Optional;
 
 @Entity
 public class Book {
@@ -25,8 +28,19 @@ public class Book {
     private String publisher;
     @Column(name = "genre")
     private String genre;
+    @Column(name = "stock")
+    @Value("0")
+    private Integer stock;
 
     public Book() {
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -84,4 +98,15 @@ public class Book {
     public void setGenre(String genre) {
         this.genre = genre;
     }
+
+    public void incrementStock() {
+        this.stock = Optional.ofNullable(this.stock).orElse(0) + 1;
+    }
+
+    public void decrementStock() {
+        if (Optional.ofNullable(this.stock).orElse(0).equals(0))
+            return;
+        this.stock -= 1;
+    }
+
 }

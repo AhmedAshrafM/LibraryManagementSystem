@@ -2,7 +2,6 @@ package org.maidscc.librarymanagementsystem.controllers;
 
 import jakarta.validation.Valid;
 import org.maidscc.librarymanagementsystem.dtos.PatronDTO;
-import org.maidscc.librarymanagementsystem.exceptions.DuplicateFoundException;
 import org.maidscc.librarymanagementsystem.exceptions.PatronNotFoundException;
 import org.maidscc.librarymanagementsystem.models.Patron;
 import org.maidscc.librarymanagementsystem.services.PatronService;
@@ -19,59 +18,44 @@ public class PatronController {
     public PatronController(PatronService patronService) {
         this.patronService = patronService;
     }
+
     @GetMapping
     public List<Patron> getPatrons() {
         return patronService.getAllPatrons();
     }
 
     @GetMapping("{patronId}")
-    public Patron getPatronById(
+    public ResponseEntity<Patron> getPatronById(
             @PathVariable("patronId") long patronId
     ) {
-        try {
-            return patronService.getPatronById(patronId);
-        } catch (PatronNotFoundException e) {
-            throw new PatronNotFoundException(e.getMessage());
-        }
+        Patron patron = patronService.getPatronById(patronId);
+        return ResponseEntity.ok(patron);
     }
 
     @PostMapping
-    public Patron addPatron(@RequestBody @Valid PatronDTO patron) {
-        try {
-            Patron newPatron = patronService.addPatron(patron);
-            if (newPatron == null) {
-                ResponseEntity.badRequest().build();
-            }
-            return newPatron;
-        } catch (DuplicateFoundException e) {
-            throw new DuplicateFoundException(e.getMessage());
+    public ResponseEntity<Patron> addPatron(@RequestBody @Valid PatronDTO patron) {
+        Patron newPatron = patronService.addPatron(patron);
+        if (newPatron == null) {
+            return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.ok(newPatron);
     }
 
     @PutMapping("{id}")
-    public Patron updatePatron(@PathVariable Long id, @RequestBody Patron patron) {
-        try {
-            Patron updatedPatron = patronService.updatePatron(id, patron);
+    public ResponseEntity<Patron> updatePatron(@PathVariable Long id, @RequestBody Patron patron) {
+        Patron updatedPatron = patronService.updatePatron(id, patron);
 
-            if (updatedPatron == null) {
-                ResponseEntity.badRequest().build();
-            }
-
-            return updatedPatron;
-        } catch (PatronNotFoundException e) {
-            throw new PatronNotFoundException(e.getMessage());
-        } catch (DuplicateFoundException e) {
-            throw new DuplicateFoundException(e.getMessage());
+        if (updatedPatron == null) {
+            return ResponseEntity.badRequest().build();
         }
+
+        return ResponseEntity.ok(updatedPatron);
     }
 
     @DeleteMapping("{id}")
-    public void deletePatron(@PathVariable Long id) {
-        try {
-            patronService.deletePatron(id);
+    public ResponseEntity<Void> deletePatron(@PathVariable Long id) {
 
-        } catch (PatronNotFoundException e) {
-            throw new PatronNotFoundException(e.getMessage());
-        }
+            patronService.deletePatron(id);
+            return ResponseEntity.noContent().build();
     }
 }

@@ -1,6 +1,7 @@
 package org.maidscc.librarymanagementsystem.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 
@@ -11,12 +12,15 @@ public class BorrowingRecord {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
+    @NotNull
     private Book book;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patron_id")
+    @NotNull
     private Patron patron;
     @Column(name = "borrow_date")
     private LocalDate borrowDate;
+    @NotNull
     @Column(name = "return_date")
     private LocalDate returnDate;
     private boolean isReturned;

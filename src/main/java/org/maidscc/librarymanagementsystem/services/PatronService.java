@@ -30,7 +30,7 @@ public class PatronService implements PatronDao {
         return patronRepository.findAll();
     }
 
-    @Cacheable(value = "patrons", key= "#id")
+    @Cacheable(value = "patrons", key = "#id")
     @Override
     public Patron getPatronById(long id) {
         return patronRepository.findById(id)
@@ -46,7 +46,7 @@ public class PatronService implements PatronDao {
     @Transactional
     @Override
     public Patron addPatron(PatronDTO patron) {
-        if(this.patronRepository.findByEmail(patron.email()).isEmpty()){
+        if (this.patronRepository.findByEmail(patron.email()).isEmpty()) {
             Patron newPatron = this.patronDtoToPatronConverter.convert(patron);
             return patronRepository.save(newPatron);
         }
@@ -58,19 +58,19 @@ public class PatronService implements PatronDao {
     public Patron updatePatron(long id, Patron patronData) {
         Patron patron = this.patronRepository.findById(id).
                 orElseThrow(() -> new PatronNotFoundException("patron with id [%s} not found".formatted(id)));
-        if(patronData.getName() != null){
+        if (patronData.getName() != null) {
             patron.setName(patronData.getName());
         }
-        if(patronData.getAddress() != null){
+        if (patronData.getAddress() != null) {
             patron.setAddress(patronData.getAddress());
         }
-        if(patronData.getPhone() != null){
+        if (patronData.getPhone() != null) {
             patron.setPhone(patronData.getPhone());
         }
-        if(patronData.getEmail() != null){
-            if(this.patronRepository.findByEmail(patronData.getEmail()).isEmpty()) {
+        if (patronData.getEmail() != null) {
+            if (this.patronRepository.findByEmail(patronData.getEmail()).isEmpty()) {
                 patron.setEmail(patronData.getEmail());
-            }else{
+            } else {
                 throw new DuplicateFoundException("patron with same name already exists");
             }
         }

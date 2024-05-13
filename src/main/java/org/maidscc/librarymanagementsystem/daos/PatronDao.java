@@ -7,9 +7,14 @@ import java.util.List;
 
 public interface PatronDao {
     List<Patron> getAllPatrons();
+
     Patron getPatronById(long id);
+
     Patron getByEmail(String email);
+
     Patron addPatron(PatronDTO patron);
+
     Patron updatePatron(long id, Patron patronData);
+
     void deletePatron(long id);
 }

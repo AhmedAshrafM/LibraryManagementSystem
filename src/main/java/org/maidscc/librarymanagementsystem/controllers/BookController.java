@@ -1,9 +1,8 @@
 package org.maidscc.librarymanagementsystem.controllers;
 
 import jakarta.validation.Valid;
-import org.maidscc.librarymanagementsystem.dtos.BookDTO;
-import org.maidscc.librarymanagementsystem.exceptions.BookNotFoundException;
-import org.maidscc.librarymanagementsystem.exceptions.DuplicateFoundException;
+import org.maidscc.librarymanagementsystem.converters.BookDtoToBookConverter;
+import org.maidscc.librarymanagementsystem.dtos.BookRequestDTO;
 import org.maidscc.librarymanagementsystem.models.Book;
 import org.maidscc.librarymanagementsystem.services.BookService;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,7 @@ import java.util.List;
 public class BookController {
     private final BookService bookService;
 
+
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
@@ -26,53 +26,40 @@ public class BookController {
     }
 
     @GetMapping("{bookId}")
-    public Book getBookById(
+    public ResponseEntity<Book> getBookById(
             @PathVariable("bookId") long bookId
     ) {
-        try {
-            return bookService.getBookById(bookId);
-        } catch (BookNotFoundException e) {
-            throw new BookNotFoundException(e.getMessage());
-        }
+        var queriedBook = bookService.getBookById(bookId);
+        return ResponseEntity.ok(queriedBook);
+
     }
 
     @PostMapping
-    public Book addBook(@RequestBody @Valid BookDTO book) {
-        try {
-            Book newBook = bookService.addBook(book);
-            if (newBook == null) {
-                ResponseEntity.badRequest().build();
-            }
-            return newBook;
-        } catch (DuplicateFoundException e) {
-            throw new DuplicateFoundException(e.getMessage());
+    public ResponseEntity<Book> addBook(@RequestBody @Valid BookRequestDTO book) {
+        Book newBook = bookService.addBook(book);
+        if (newBook == null) {
+            return ResponseEntity.badRequest().build();
         }
+        return ResponseEntity.ok(newBook);
+
     }
 
     @PutMapping("{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody Book book) {
-        try {
-            Book updatedBook = bookService.updateBook(id, book);
-
-            if (updatedBook == null) {
-                ResponseEntity.badRequest().build();
-            }
-
-            return updatedBook;
-        } catch (BookNotFoundException e) {
-            throw new BookNotFoundException(e.getMessage());
-        } catch (DuplicateFoundException e) {
-            throw new DuplicateFoundException(e.getMessage());
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        Book updatedBook = bookService.updateBook(id, book);
+        if (updatedBook == null) {
+           return ResponseEntity.badRequest().build();
         }
+
+        return ResponseEntity.ok(updatedBook);
+
     }
 
     @DeleteMapping("{id}")
-    public void deleteBook(@PathVariable Long id) {
-        try {
-            bookService.deleteBook(id);
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
 
-        } catch (BookNotFoundException e) {
-            throw new BookNotFoundException(e.getMessage());
-        }
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
+
     }
 }
