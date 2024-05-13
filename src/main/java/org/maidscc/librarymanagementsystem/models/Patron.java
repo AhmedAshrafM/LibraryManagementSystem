@@ -1,6 +1,7 @@
 package org.maidscc.librarymanagementsystem.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Patron {
@@ -8,12 +9,16 @@ public class Patron {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+    @NotNull
     @Column(name = "name")
     private String name;
+    @NotNull
     @Column(name = "phone")
     private String phone;
+    @NotNull
     @Column(name = "email")
     private String email;
+    @NotNull
     @Column(name = "address")
     private String address;
 

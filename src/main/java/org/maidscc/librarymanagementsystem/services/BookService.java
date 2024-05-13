@@ -87,7 +87,7 @@ public class BookService implements BookDao {
     @Transactional
     @Override
     public void deleteBook(long id){
-        Book book = this.bookRepository.findById(id)
+        this.bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("book with id [%s] not found".formatted(id)));
         this.bookRepository.deleteById(id);
     }
