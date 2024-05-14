@@ -1,6 +1,7 @@
 package org.maidscc.librarymanagementsystem.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -15,6 +16,7 @@ public class Patron {
     @NotNull
     @Column(name = "phone")
     private String phone;
+    @Email
     @NotNull
     @Column(name = "email")
     private String email;

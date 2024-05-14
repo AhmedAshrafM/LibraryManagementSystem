@@ -1,8 +1,8 @@
 package org.maidscc.librarymanagementsystem.controllers;
 
 import jakarta.validation.Valid;
+import org.maidscc.librarymanagementsystem.converters.PatronDtoToPatronConverter;
 import org.maidscc.librarymanagementsystem.dtos.PatronDTO;
-import org.maidscc.librarymanagementsystem.exceptions.PatronNotFoundException;
 import org.maidscc.librarymanagementsystem.models.Patron;
 import org.maidscc.librarymanagementsystem.services.PatronService;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +15,11 @@ import java.util.List;
 public class PatronController {
     private final PatronService patronService;
 
-    public PatronController(PatronService patronService) {
+    private final PatronDtoToPatronConverter patronDtoToPatronConverter;
+
+    public PatronController(PatronService patronService, PatronDtoToPatronConverter patronDtoToPatronConverter) {
         this.patronService = patronService;
+        this.patronDtoToPatronConverter = patronDtoToPatronConverter;
     }
 
     @GetMapping
@@ -34,7 +37,7 @@ public class PatronController {
 
     @PostMapping
     public ResponseEntity<Patron> addPatron(@RequestBody @Valid PatronDTO patron) {
-        Patron newPatron = patronService.addPatron(patron);
+        Patron newPatron = patronService.addPatron(patronDtoToPatronConverter.convert(patron));
         if (newPatron == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -55,7 +58,7 @@ public class PatronController {
     @DeleteMapping("{id}")
     public ResponseEntity<Void> deletePatron(@PathVariable Long id) {
 
-            patronService.deletePatron(id);
-            return ResponseEntity.noContent().build();
+        patronService.deletePatron(id);
+        return ResponseEntity.noContent().build();
     }
 }

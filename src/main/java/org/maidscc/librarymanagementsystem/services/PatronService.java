@@ -1,8 +1,6 @@
 package org.maidscc.librarymanagementsystem.services;
 
-import org.maidscc.librarymanagementsystem.converters.PatronDtoToPatronConverter;
 import org.maidscc.librarymanagementsystem.daos.PatronDao;
-import org.maidscc.librarymanagementsystem.dtos.PatronDTO;
 import org.maidscc.librarymanagementsystem.exceptions.DuplicateFoundException;
 import org.maidscc.librarymanagementsystem.exceptions.PatronNotFoundException;
 import org.maidscc.librarymanagementsystem.models.Patron;
@@ -17,11 +15,10 @@ import java.util.List;
 public class PatronService implements PatronDao {
 
     private final PatronRepository patronRepository;
-    private final PatronDtoToPatronConverter patronDtoToPatronConverter;
 
-    public PatronService(PatronRepository patronRepository, PatronDtoToPatronConverter patronDtoToPatronConverter) {
+    public PatronService(PatronRepository patronRepository) {
         this.patronRepository = patronRepository;
-        this.patronDtoToPatronConverter = patronDtoToPatronConverter;
+
     }
 
     @Cacheable(value = "patrons")
@@ -45,10 +42,9 @@ public class PatronService implements PatronDao {
 
     @Transactional
     @Override
-    public Patron addPatron(PatronDTO patron) {
-        if (this.patronRepository.findByEmail(patron.email()).isEmpty()) {
-            Patron newPatron = this.patronDtoToPatronConverter.convert(patron);
-            return patronRepository.save(newPatron);
+    public Patron addPatron(Patron patron) {
+        if (this.patronRepository.findByEmail(patron.getEmail()).isEmpty()) {
+            return patronRepository.save(patron);
         }
         throw new DuplicateFoundException("patron with same email already exists");
     }

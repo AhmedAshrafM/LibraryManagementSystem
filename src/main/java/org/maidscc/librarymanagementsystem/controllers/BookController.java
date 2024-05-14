@@ -14,10 +14,11 @@ import java.util.List;
 @RequestMapping("api/v1/books")
 public class BookController {
     private final BookService bookService;
+    private final BookDtoToBookConverter bookDtoToBookConverter;
 
-
-    public BookController(BookService bookService) {
+    public BookController(BookService bookService, BookDtoToBookConverter bookDtoToBookConverter) {
         this.bookService = bookService;
+        this.bookDtoToBookConverter = bookDtoToBookConverter;
     }
 
     @GetMapping
@@ -36,7 +37,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody @Valid BookRequestDTO book) {
-        Book newBook = bookService.addBook(book);
+        Book newBook = bookService.addBook(bookDtoToBookConverter.convert(book));
         if (newBook == null) {
             return ResponseEntity.badRequest().build();
         }
@@ -48,7 +49,7 @@ public class BookController {
     public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
         Book updatedBook = bookService.updateBook(id, book);
         if (updatedBook == null) {
-           return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok(updatedBook);

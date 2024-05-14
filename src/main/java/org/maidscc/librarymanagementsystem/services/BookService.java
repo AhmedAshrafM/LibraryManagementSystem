@@ -1,8 +1,6 @@
 package org.maidscc.librarymanagementsystem.services;
 
-import org.maidscc.librarymanagementsystem.converters.BookDtoToBookConverter;
 import org.maidscc.librarymanagementsystem.daos.BookDao;
-import org.maidscc.librarymanagementsystem.dtos.BookRequestDTO;
 import org.maidscc.librarymanagementsystem.exceptions.BookNotFoundException;
 import org.maidscc.librarymanagementsystem.exceptions.DuplicateFoundException;
 import org.maidscc.librarymanagementsystem.models.Book;
@@ -18,11 +16,9 @@ import java.util.Objects;
 public class BookService implements BookDao {
 
     private final BookRepository bookRepository;
-    private final BookDtoToBookConverter bookDtoToBookConverter;
 
-    public BookService(BookRepository bookRepository, BookDtoToBookConverter bookDtoToBookConverter) {
+    public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;
-        this.bookDtoToBookConverter = bookDtoToBookConverter;
     }
 
     @Cacheable(value = "books")
@@ -46,13 +42,12 @@ public class BookService implements BookDao {
 
     @Transactional
     @Override
-    public Book addBook(BookRequestDTO book) {
-        if (this.bookRepository.findByTitle(book.title()).isEmpty()) {
-            Book newBook = this.bookDtoToBookConverter.convert(book);
-            if (newBook.getStock() == null) {
-                newBook.setStock(0);
+    public Book addBook(Book book) {
+        if (this.bookRepository.findByTitle(book.getTitle()).isEmpty()) {
+            if (book.getStock() == null) {
+                book.setStock(0);
             }
-            return bookRepository.save(newBook);
+            return bookRepository.save(book);
         }
         throw new DuplicateFoundException("book with same title already exists");
     }

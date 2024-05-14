@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BorrowingRecordService implements BorrowingRecordDao {
@@ -22,8 +21,8 @@ public class BorrowingRecordService implements BorrowingRecordDao {
     private final PatronRepository patronRepository;
 
     public BorrowingRecordService(BorrowingRecordRepository borrowingRecordRepository, BookRepository bookRepository, PatronRepository patronRepository) {
-        this.borrowingRecordRepository = borrowingRecordRepository;
 
+        this.borrowingRecordRepository = borrowingRecordRepository;
         this.bookRepository = bookRepository;
         this.patronRepository = patronRepository;
     }
@@ -66,11 +65,14 @@ public class BorrowingRecordService implements BorrowingRecordDao {
     @Override
     public boolean returnBook(Long patronId, Long bookId) {
         List<BorrowingRecord> borrows = borrowingRecordRepository.findByBookIdAndPatronId(bookId, patronId);
+
         if (borrows.isEmpty()) {
             throw new BorrowingRecordNotFoundException("No record found with the specified ids");
         }
+
         boolean foundReturned = false; // Flag to track if a returned record is found
         boolean foundNotReturned = false; // Flag to track if a not-returned record is found
+
         for (BorrowingRecord borrow : borrows) {
             if (borrow.isReturned()) {
                 foundReturned = true; // Mark that a returned record is found

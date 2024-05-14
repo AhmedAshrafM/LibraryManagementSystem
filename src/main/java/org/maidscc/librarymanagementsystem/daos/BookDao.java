@@ -1,6 +1,5 @@
 package org.maidscc.librarymanagementsystem.daos;
 
-import org.maidscc.librarymanagementsystem.dtos.BookRequestDTO;
 import org.maidscc.librarymanagementsystem.models.Book;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public interface BookDao {
 
     Book getByTitle(String title);
 
-    Book addBook(BookRequestDTO book);
+    Book addBook(Book book);
 
     Book updateBook(long id, Book bookData);
 

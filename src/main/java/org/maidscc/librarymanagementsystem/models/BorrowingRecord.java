@@ -1,6 +1,7 @@
 package org.maidscc.librarymanagementsystem.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ public class BorrowingRecord {
     private Patron patron;
     @Column(name = "borrow_date")
     private LocalDate borrowDate;
+    @FutureOrPresent
     @NotNull
     @Column(name = "return_date")
     private LocalDate returnDate;
