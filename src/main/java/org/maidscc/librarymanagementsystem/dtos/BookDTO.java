@@ -1,6 +1,6 @@
 package org.maidscc.librarymanagementsystem.dtos;
 
-public record BookRequestDTO(
+public record BookDTO(
         String title,
         String author,
         String publicationYear,

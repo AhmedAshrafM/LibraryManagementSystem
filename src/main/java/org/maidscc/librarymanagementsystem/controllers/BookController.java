@@ -2,7 +2,7 @@ package org.maidscc.librarymanagementsystem.controllers;
 
 import jakarta.validation.Valid;
 import org.maidscc.librarymanagementsystem.converters.BookDtoToBookConverter;
-import org.maidscc.librarymanagementsystem.dtos.BookRequestDTO;
+import org.maidscc.librarymanagementsystem.dtos.BookDTO;
 import org.maidscc.librarymanagementsystem.models.Book;
 import org.maidscc.librarymanagementsystem.services.BookService;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<Book> addBook(@RequestBody @Valid BookRequestDTO book) {
+    public ResponseEntity<Book> addBook(@RequestBody @Valid BookDTO book) {
         Book newBook = bookService.addBook(bookDtoToBookConverter.convert(book));
         if (newBook == null) {
             return ResponseEntity.badRequest().build();
