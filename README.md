@@ -7,7 +7,7 @@ This is a simple Library Management System built with Java and Spring Boot.
 - [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-- [Features](#feachers)
+- [Features](#features)
 - [How to Run](#how-to-run)
 - [Database](#database)
 - [API Endpoints](#api-endpoints)
