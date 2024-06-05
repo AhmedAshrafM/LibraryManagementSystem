@@ -67,7 +67,7 @@ public class PatronService implements PatronDao {
             if (this.patronRepository.findByEmail(patronData.getEmail()).isEmpty()) {
                 patron.setEmail(patronData.getEmail());
             } else {
-                throw new DuplicateFoundException("patron with same name already exists");
+                throw new DuplicateFoundException("patron with same email already exists");
             }
         }
 

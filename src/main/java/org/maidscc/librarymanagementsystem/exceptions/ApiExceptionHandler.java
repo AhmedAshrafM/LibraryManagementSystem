@@ -3,6 +3,7 @@ package org.maidscc.librarymanagementsystem.exceptions;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.maidscc.librarymanagementsystem.dtos.ApiErrorDto;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -70,4 +71,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDetails);
     }
 
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiErrorDto> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        var errorDetails = new ApiErrorDto(new HashMap<String, Object>(), "Operation failed due to data integrity violation. This usually means there are related records that depend on this data.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorDetails);
+    }
 }
